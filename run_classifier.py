@@ -779,7 +779,7 @@ def convert_examples_to_features(examples, label_list, max_seq_length,
         features.append(feature)
     return features
 
-
+from sst_processor import
 def main(_):
     tf.logging.set_verbosity(tf.logging.INFO)
 
