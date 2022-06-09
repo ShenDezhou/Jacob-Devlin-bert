@@ -24,7 +24,7 @@ print(m)
 
 for i in range(len(gold_list)):
     if gold_list[i] != pred_list[i]:
-        logging.error("sent:{},gold:{},pred:{}".format(df.iloc[i, 0], gold_list[i], pred_list[i]))
+        logging.error("sent:{},gold:{},pred:{},cls0prob:{},cls1prob:{}".format(df.iloc[i, 0], gold_list[i], pred_list[i], df_pred.iloc[i, 0], df_pred.iloc[i, 1]))
 
 #               precision    recall  f1-score   support
 #
