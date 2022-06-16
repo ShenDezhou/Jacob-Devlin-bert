@@ -332,6 +332,46 @@ class MrpcProcessor(DataProcessor):
                 InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
         return examples
 
+class PCProcessor(DataProcessor):
+    """Processor for the PC data set (GLUE version)."""
+
+    def get_train_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "train.tsv"), quotechar='"'), "train")
+
+    def get_dev_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "dev.tsv"), quotechar='"'), "dev")
+
+    def get_test_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "test.tsv"), quotechar='"'), "test")
+
+    def get_labels(self):
+        """See base class."""
+        return [str(i) for i in range(17)]
+
+    def _create_examples(self, lines, set_type):
+        """Creates examples for the training and dev sets."""
+        examples = []
+        for (i, line) in enumerate(lines):
+            # All set has a header
+            if i == 0:
+                continue
+            guid = "%s-%s" % (set_type, i)
+            if set_type == "test":
+                text_a = tokenization.convert_to_unicode(line[0])
+                label = tokenization.convert_to_unicode(line[1])
+            else:
+                text_a = tokenization.convert_to_unicode(line[0])
+                label = tokenization.convert_to_unicode(line[1])
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+        return examples
+
 class SCProcessor(DataProcessor):
     """Processor for the SC data set (GLUE version)."""
 
@@ -864,6 +904,7 @@ def main(_):
     tf.logging.set_verbosity(tf.logging.INFO)
 
     processors = {
+        "pc": PCProcessor,
         "sc": SCProcessor,
         "sst2": SSTProcessor,
         "cola": ColaProcessor,
