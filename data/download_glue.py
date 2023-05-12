@@ -25,7 +25,8 @@ import argparse
 import tempfile
 import urllib.request
 import zipfile
-
+import io
+URLLIB = urllib.request
 TASKS = ["CoLA", "SST", "MRPC", "QQP", "STS", "MNLI", "QNLI", "RTE", "WNLI", "diagnostic"]
 TASK2PATH = {"CoLA": 'https://dl.fbaipublicfiles.com/glue/data/CoLA.zip',
              "SST": 'https://dl.fbaipublicfiles.com/glue/data/SST-2.zip',
@@ -35,7 +36,8 @@ TASK2PATH = {"CoLA": 'https://dl.fbaipublicfiles.com/glue/data/CoLA.zip',
              "QNLI": 'https://dl.fbaipublicfiles.com/glue/data/QNLIv2.zip',
              "RTE": 'https://dl.fbaipublicfiles.com/glue/data/RTE.zip',
              "WNLI": 'https://dl.fbaipublicfiles.com/glue/data/WNLI.zip',
-             "diagnostic": 'https://dl.fbaipublicfiles.com/glue/data/AX.tsv'}
+             "diagnostic": 'https://dl.fbaipublicfiles.com/glue/data/AX.tsv',
+             'MRPC':'https://raw.githubusercontent.com/MegEngine/Models/master/official/nlp/bert/glue_data/MRPC/dev_ids.tsv'}
 
 MRPC_TRAIN = 'https://dl.fbaipublicfiles.com/senteval/senteval_data/msr_paraphrase_train.txt'
 MRPC_TEST = 'https://dl.fbaipublicfiles.com/senteval/senteval_data/msr_paraphrase_test.txt'
