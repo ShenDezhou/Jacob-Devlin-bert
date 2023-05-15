@@ -461,6 +461,55 @@ class SSTProcessor(DataProcessor):
                 InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
         return examples
 
+class AxProcessor(DataProcessor):
+  """Processor for the AX dataset (GLUE diagnostics dataset)."""
+
+  def get_train_examples(self, data_dir):
+    """See base class."""
+    train_mnli_dataset = tfds.load(
+        "glue/mnli", split="train", try_gcs=True).as_numpy_iterator()
+    return self._create_examples_tfds(train_mnli_dataset, "train")
+
+  def get_dev_examples(self, data_dir):
+    """See base class."""
+    val_mnli_dataset = tfds.load(
+        "glue/mnli", split="validation_matched",
+        try_gcs=True).as_numpy_iterator()
+    return self._create_examples_tfds(val_mnli_dataset, "validation")
+
+  def get_test_examples(self, data_dir):
+    """See base class."""
+    test_ax_dataset = tfds.load(
+        "glue/ax", split="test", try_gcs=True).as_numpy_iterator()
+    return self._create_examples_tfds(test_ax_dataset, "test")
+
+  def get_labels(self):
+    """See base class."""
+    return ["contradiction", "entailment", "neutral"]
+
+  @staticmethod
+  def get_processor_name():
+    """See base class."""
+    return "AX"
+
+  def _create_examples_tfds(self, dataset, set_type):
+    """Creates examples for the training/dev/test sets."""
+    dataset = list(dataset)
+    dataset.sort(key=lambda x: x["idx"])
+    examples = []
+    for i, example in enumerate(dataset):
+      guid = "%s-%s" % (set_type, i)
+      label = "contradiction"
+      text_a = self.process_text_fn(example["hypothesis"])
+      text_b = self.process_text_fn(example["premise"])
+      if set_type != "test":
+        label = self.get_labels()[example["label"]]
+      examples.append(
+          InputExample(
+              guid=guid, text_a=text_a, text_b=text_b, label=label,
+              weight=None))
+    return examples
+
 class ColaProcessor(DataProcessor):
     """Processor for the CoLA data set (GLUE version)."""
 
@@ -1076,6 +1125,7 @@ def main(_):
     processors = {
         "pc": PCProcessor,
         "sc": SCProcessor,
+        "ax": AxProcessor,
         "cola": ColaProcessor,
         "mnli": MnliProcessor,
         "mnli-mm": MnliMismatchedProcessor,
