@@ -565,7 +565,7 @@ class StsbProcessor(DataProcessor):
 
     def get_labels(self):
         """See base class."""
-        return [None]
+        return ['0','1','2','3','4','5']
 
     def _create_examples(self, lines, set_type):
         """Creates examples for the training and dev sets."""
@@ -576,10 +576,11 @@ class StsbProcessor(DataProcessor):
             guid = "%s-%s" % (set_type, line[0])
             text_a = line[7]
             text_b = line[8]
-            label = line[-1]
+            label = str(int(float(line[-1])))
             examples.append(
                 InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
         return examples
+
 
 
 class QqpProcessor(DataProcessor):
